@@ -1,92 +1,113 @@
-
 #include <iostream>
-#include <limits> // Required for input cleaning
+#include <limits>
+#include <string>
 
 using namespace std;
 
-// Function Prototypes (Declaring the functions we will use)
+-
+struct Period {
+    string subject;
+    string teacher;
+}
+
+
+Period timetable[5][4];
+string days[5] = {"mon", "tues", "wed", "thurs", "Fri"};
+
 void displayMenu();
-void studentModule();
-void teacherModule();
+void setTimetable();
+void viewTimetable();
+int getValidatedInput(int min, int max);
+
 
 int main() {
     int choice;
 
     do {
-        // Display the main menu
         displayMenu();
-        
-        cout << "Enter your choice (1-5): ";
-        
-        // Input validation loop
-        while (!(cin >> choice)) {
-            cout << "Invalid input. Please enter a number: ";
-            // Clear the error flags on cin
-            cin.clear(); 
-            // Discard the bad input up to the next newline character
-            cin.ignore(numeric_limits<streamsize>::max(), '\n'); 
-        }
+        cout << "enter your choice: ";
+        choice = getValidatedInput(1, 3);
 
-        // Handle the user's choice
         switch (choice) {
             case 1:
-                studentModule();
+                setTimetable();
                 break;
             case 2:
-                teacherModule();
+                viewTimetable();
                 break;
             case 3:
-                cout << "\n--- Attendance Module Selected ---\n";
-                // Add Attendance functionality here
-                break;
-            case 4:
-                cout << "\n--- Fees Module Selected ---\n";
-                // Add Fees functionality here
-                break;
-            case 5:
-                cout << "\nExiting School Management System. Goodbye!\n";
+                cout << "Exiting program. Goodbye!\n";
                 break;
             default:
-                cout << "\nInvalid choice. Please select a number between 1 and 5.\n";
-                break;
+                cout << "Invalid choice.\n";
         }
 
-    } while (choice != 5);
+    } while (choice != 3);
 
     return 0;
 }
 
-// Function to display the main menu
+
 void displayMenu() {
-    cout << "\n===================================" << endl;
-    cout << "  SCHOOL MANAGEMENT SYSTEM - MENU" << endl;
-    cout << "===================================" << endl;
-    cout << "1. Student Module" << endl;
-    cout << "2. Teacher Module" << endl;
-    cout << "3. Attendance" << endl;
-    cout << "4. Fees" << endl;
-    cout << "5. Exit" << endl;
-    cout << "-----------------------------------" << endl;
+    cout << "\n--- SCHOOL TIMETABLE MANAGEMENT ---\n";
+    cout << "1. Set Timetable\n";
+    cout << "2. View Timetable\n";
+    cout << "3. Exit\n";
 }
 
-// Function for the Student Module
-void studentModule() {
-    cout << "\n--- Student Module ---\n";
-    cout << "  1. Add New Student" << endl;
-    cout << "  2. View Student Records" << endl;
-    cout << "  3. Update Student Info" << endl;
-    cout << "  4. Go Back to Main Menu" << endl;
-    
-    // Add logic for student module sub-menu here
+int getValidatedInput(int min, int max) {
+    int input;
+    while (!(cin >> input) || input < min || input > max) {
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cout << "Invalid input. Enter a number between " << min << " and " << max << ": ";
+    }
+    cin.ignore(numeric_limits<streamsize>::max(), '\n'); 
+    return input;
 }
 
-// Function for the Teacher Module
-void teacherModule() {
-    cout << "\n--- Teacher Module ---\n";
-    cout << "  1. Add New Teacher" << endl;
-    cout << "  2. View Teacher Records" << endl;
-    cout << "  3. Assign Classes/Subjects" << endl;
-    cout << "  4. Go Back to Main Menu" << endl;
-    
-    // Add logic for teacher module sub-menu here
+
+void setTimetable() {
+    int day, period;
+    string subject, teacher;
+
+    cout << "\nSelect Day:\n";
+    for (int i = 0; i < 5; i++) {
+        cout << i + 1 << ". " << days[i] << endl;
+    }
+
+    cout << "Enter day number (1-5): ";
+    day = getValidatedInput(1, 5);
+
+    cout << "Enter period number (1-4): ";
+    period = getValidatedInput(1, 4);
+
+    cin.ignore(); 
+    cout << "Enter subject name: ";
+    getline(cin, subject);
+
+    cout << "Enter teacher name (optional): ";
+    getline(cin, teacher);
+
+    timetable[day - 1][period - 1] = {subject, teacher};
+    cout << "Timetable updated successfully!\n";
 }
+
+
+void viewTimetable() {
+    cout << "\n--- SCHOOL TIMETABLE ---\n";
+
+    for (int i = 0; i < 5; i++) {
+        cout << days[i] << ":\n";
+        for (int j = 0; j < 4; j++) {
+            if (timetable[i][j].subject.empty())
+                cout << "  Period " << j + 1 << ": Free\n";
+            else
+                cout << "  Period " << j + 1 << ": " << timetable[i][j].subject
+                     << " (" << timetable[i][j].teacher << ")\n";
+        }
+    }
+}
+
+
+
